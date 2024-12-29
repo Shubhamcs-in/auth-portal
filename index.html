@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login and Registration Portal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        input {
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .switch {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .switch a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+        .switch a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 id="form-title">Login</h2>
+        <form id="auth-form">
+            <input type="text" id="mobile" placeholder="Mobile Number" required>
+            <input type="email" id="email" placeholder="Email" style="display: none;">
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit">Submit</button>
+        </form>
+        <div class="switch">
+            <p id="switch-text">Don't have an account? <a href="#" id="switch-link">Register</a></p>
+        </div>
+    </div>
+
+    <script>
+        const formTitle = document.getElementById('form-title');
+        const authForm = document.getElementById('auth-form');
+        const switchText = document.getElementById('switch-text');
+        const switchLink = document.getElementById('switch-link');
+        const emailField = document.getElementById('email');
+        const passwordField = document.getElementById('password');
+        const mobileField = document.getElementById('mobile');
+
+        let isRegister = false;
+
+        switchLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            isRegister = !isRegister;
+
+            if (isRegister) {
+                formTitle.textContent = 'Register';
+                emailField.style.display = 'block';
+                switchText.innerHTML = 'Already have an account? <a href="#" id="switch-link">Login</a>';
+            } else {
+                formTitle.textContent = 'Login';
+                emailField.style.display = 'none';
+                switchText.innerHTML = "Don't have an account? <a href='#' id='switch-link'>Register</a>";
+            }
+        });
+
+        authForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const mobile = mobileField.value;
+            const email = emailField.value;
+            const password = passwordField.value;
+
+            if (isRegister) {
+                const response = await fetch('http://127.0.0.1:5000/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mobile, email, password }),
+                });
+                const result = await response.json();
+                alert(result.message || result.error);
+            } else {
+                const response = await fetch('http://127.0.0.1:5000/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mobile, password }),
+                });
+                const result = await response.json();
+                alert(result.message || result.error);
+            }
+        });
+    </script>
+</body>
+</html>
